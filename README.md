@@ -46,7 +46,7 @@ npm install
 4. Fill in the details:
    - **App name:** Spotify Dashboard (or whatever you prefer)
    - **App description:** Personal listening dashboard
-   - **Redirect URI:** `http://localhost:3000/callback`
+   - **Redirect URI:** `http://127.0.0.1:3000/callback`
    - **API:** Check "Web API"
 5. Save and note your **Client ID** and **Client Secret**
 
@@ -63,7 +63,7 @@ Edit `.env` and add your credentials:
 ```
 SPOTIFY_CLIENT_ID=your_client_id_here
 SPOTIFY_CLIENT_SECRET=your_client_secret_here
-REDIRECT_URI=http://localhost:3000/callback
+REDIRECT_URI=http://127.0.0.1:3000/callback
 PORT=3000
 ```
 
@@ -73,11 +73,11 @@ PORT=3000
 node server.js
 ```
 
-The server will start on `http://localhost:3000`
+The server will start on `http://127.0.0.1:3000`
 
 ### 6. Login and Use
 
-1. Open `http://localhost:3000` in your browser
+1. Open `http://127.0.0.1:3000` in your browser
 2. Click **"Login with Spotify"**
 3. Authorize the application
 4. You'll be redirected to the dashboard
