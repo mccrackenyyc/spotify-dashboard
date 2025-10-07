@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spotify Dashboard - Now Playing</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1DB954 0%, #191414 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            padding: 20px;
+        }
+
+        .container {
+            text-align: center;
+            background: rgba(0, 0, 0, 0.6);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            max-width: 600px;
+            width: 100%;
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 2rem;
+            color: #1DB954;
+        }
+
+        #now-playing {
+            margin: 2rem 0;
+        }
+
+        .album-art {
+            width: 300px;
+            height: 300px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            margin: 0 auto 2rem;
+            object-fit: cover;
+        }
+
+        .track-info {
+            margin: 1rem 0;
+        }
+
+        .track-name {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            color: white;
+        }
+
+        .artist-name {
+            font-size: 1.5rem;
+            color: #b3b3b3;
+            margin-bottom: 0.5rem;
+        }
+
+        .album-name {
+            font-size: 1.2rem;
+            color: #808080;
+        }
+
+        .not-playing {
+            color: #b3b3b3;
+            font-size: 1.2rem;
+            padding: 2rem;
+        }
+
+        .loading {
+            color: #1DB954;
+            font-size: 1.2rem;
+        }
+
+        .error {
+            color: #ff6b6b;
+            padding: 1rem;
+            background: rgba(255, 107, 107, 0.1);
+            border-radius: 10px;
+            margin: 1rem 0;
+        }
+
+        .refresh-btn {
+            background: #1DB954;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 1rem;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 2rem;
+            box-shadow: 0 4px 15px rgba(29, 185, 84, 0.4);
+        }
+
+        .refresh-btn:hover {
+            background: #1ed760;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(29, 185, 84, 0.6);
+        }
+
+        .refresh-btn:active {
+            transform: translateY(0);
+        }
+
+        .auto-refresh {
+            margin-top: 1rem;
+            color: #b3b3b3;
+            font-size: 0.9rem;
+        }
+
+        .spotify-link {
+            display: inline-block;
+            margin-top: 1rem;
+            color: #1DB954;
+            text-decoration: none;
+            font-size: 1rem;
+            transition: color 0.3s ease;
+        }
+
+        .spotify-link:hover {
+            color: #1ed760;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎵 Now Playing</h1>
+        
+        <div id="now-playing">
+            <div class="loading">Loading your currently playing track...</div>
+        </div>
+
+        <button class="refresh-btn" onclick="fetchNowPlaying()">Refresh</button>
+        <div class="auto-refresh">Auto-refreshing every 5 seconds</div>
+    </div>
+
+    <script>
+        async function fetchNowPlaying() {
+            const container = document.getElementById('now-playing');
+            
+            try {
+                const response = await fetch('/api/now-playing');
+                
+                if (!response.ok) {
+                    if (response.status === 401) {
+                        container.innerHTML = '<div class="error">Session expired. Please <a href="/" style="color: #1DB954;">login again</a>.</div>';
+                        return;
+                    }
+                    throw new Error('Failed to fetch now playing');
+                }
+
+                const data = await response.json();
+
+                if (!data.isPlaying) {
+                    container.innerHTML = '<div class="not-playing">Nothing is currently playing. Start a song on Spotify!</div>';
+                    return;
+                }
+
+                // Display the track
+                container.innerHTML = `
+                    <img src="${data.albumArt}" alt="${data.albumName}" class="album-art">
+                    <div class="track-info">
+                        <div class="track-name">${data.trackName}</div>
+                        <div class="artist-name">${data.artistName}</div>
+                        <div class="album-name">${data.albumName}</div>
+                        <a href="${data.trackUrl}" target="_blank" class="spotify-link">Open in Spotify ↗</a>
+                    </div>
+                `;
+
+            } catch (error) {
+                console.error('Error:', error);
+                container.innerHTML = '<div class="error">Failed to load currently playing track. Make sure you have something playing on Spotify!</div>';
+            }
+        }
+
+        // Fetch on page load
+        fetchNowPlaying();
+
+        // Auto-refresh every 5 seconds
+        setInterval(fetchNowPlaying, 5000);
+    </script>
+</body>
+</html>
