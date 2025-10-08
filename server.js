@@ -125,6 +125,14 @@ app.get('/api/health', (req, res) => {
   });
 });
 
+// Debug endpoint to view token status
+app.get('/api/debug/token', (req, res) => {
+  res.json({ 
+    accessToken: accessToken,
+    hasToken: !!accessToken 
+  });
+});
+
 app.listen(PORT, '127.0.0.1', () => {
   console.log(`🎵 Spotify Dashboard running on http://127.0.0.1:${PORT}`);
   console.log(`📝 Visit http://127.0.0.1:${PORT} to get started`);
