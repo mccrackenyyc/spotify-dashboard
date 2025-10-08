@@ -19,7 +19,12 @@ const CLIENT_SECRET = process.env.SPOTIFY_CLIENT_SECRET;
 const REDIRECT_URI = process.env.REDIRECT_URI;
 
 // Scopes define what data we can access
-const SCOPES = 'user-read-currently-playing user-read-playback-state';
+const SCOPES = [
+  'user-read-currently-playing',
+  'user-read-playback-state',
+  'user-read-recently-played',
+  'user-top-read'
+].join(' ');
 
 // Step 1: Redirect user to Spotify authorization page
 app.get('/login', (req, res) => {
